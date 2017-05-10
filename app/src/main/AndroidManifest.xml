@@ -49,30 +49,24 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity
-            android:name=".ui.GongLueActivity"
-            android:label="@string/title_activity_gong_lue" /> <!-- Include the AdActivity configChanges and theme. -->
+        <!-- Include the AdActivity configChanges and theme. -->
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
         <activity
-            android:name=".ui.NavHomePageActivity"
+            android:name=".ui.nav.NavHomePageActivity"
             android:label="@string/title_activity_mhome_page"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ui.NavNewsActivity"
+            android:name=".ui.nav.NavNewsActivity"
             android:label="@string/title_activity_mnews"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ui.NavHistoryActivity"
+            android:name=".ui.nav.NavHistoryActivity"
             android:label="@string/title_activity_mhistory"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.Activity"
-            android:label="@string/title_activity_"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".ui.NavCollectionActivity"></activity>
+        <activity android:name=".ui.nav.NavCollectionActivity"></activity>
     </application>
 
 </manifest>

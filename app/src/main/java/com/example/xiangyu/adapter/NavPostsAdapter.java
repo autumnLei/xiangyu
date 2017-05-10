@@ -10,7 +10,7 @@ import java.util.Date;
  * Created by Administrator on 2017/3/27.
  */
 
-public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
+public class NavPostsAdapter extends RecyclerView.Adapter<NavPostsAdapter.ViewHolder> {
 
     private long POSTS_TOUXIANG;
 

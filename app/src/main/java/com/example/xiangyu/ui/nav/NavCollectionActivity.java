@@ -1,4 +1,4 @@
-package com.example.xiangyu.ui;
+package com.example.xiangyu.ui.nav;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

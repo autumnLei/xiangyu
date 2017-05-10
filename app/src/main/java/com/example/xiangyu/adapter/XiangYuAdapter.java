@@ -1,8 +1,6 @@
 package com.example.xiangyu.adapter;
 
-import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,14 +13,16 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.xiangyu.R;
 import com.example.xiangyu.entity.Message;
+import com.example.xiangyu.global.MyApplication;
 import com.example.xiangyu.ui.MessageActivity;
+
 import java.util.List;
 
 /**
  * Created by Administrator on 2017/3/27.
  */
 
-public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
+public class XiangYuAdapter extends RecyclerView.Adapter<XiangYuAdapter.ViewHolder> {
 
     public static final int TYPE_HEADER = 0;  //说明是带有Header的
     public static final int TYPE_FOOTER = 1;  //说明是带有Footer的
@@ -31,35 +31,35 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     //从XiangYuActivity过来的数据
     private List<Message> mList;
 
-    //全局Context
-    private Context mContext;
-
-    //HeaderView, FooterView
     private static View mHeaderView;
     private static View mFooterView;
 
     //只有初始化item会用到
     private ViewGroup mparent;
 
+    private OnItemClickListener mListener;
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        CardView cardView;
+    public void setOnItemClickListener(OnItemClickListener li) {
+        mListener = li;
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
         TextView text;
+
 
         public ViewHolder(View view) {
             super(view);
             if (view == mHeaderView || view == mFooterView){
                 return;
             }
-            cardView = (CardView) view;
             image = (ImageView) view.findViewById(R.id.message_image);
             text = (TextView) view.findViewById(R.id.message_text);
         }
 
     }
 
-    public MessageAdapter(List<Message> messageList) {
+    public XiangYuAdapter(List<Message> messageList) {
         mList = messageList;
     }
 
@@ -84,77 +84,37 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (mContext == null) {
-            mContext = parent.getContext();
-        }
-        View view = LayoutInflater.from(mContext).inflate(R.layout.message_item, mparent, false);
-        final ViewHolder holder = new ViewHolder(view);
-        holder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = holder.getAdapterPosition();
-                Message message = mList.get(position);
-                Intent intent = new Intent(mContext, MessageActivity.class);
-                intent.putExtra(MessageActivity.MESSAGE_NAME, message.getText());
-                intent.putExtra(MessageActivity.MESSAGE_IMAGE_ID, message.getIamgeId());
-                mContext.startActivity(intent);
-                Toast.makeText(mContext, "点击没问题", Toast.LENGTH_SHORT).show();
-            }
-        });
         mparent = parent;
         if(mHeaderView != null && viewType == TYPE_HEADER) {
             return new ViewHolder(mHeaderView);
         }
-        if(mFooterView != null && viewType == TYPE_FOOTER){
+        else if(mFooterView != null && viewType == TYPE_FOOTER){
             return new ViewHolder(mFooterView);
         }
-        View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_item, parent, false);
-        return new ViewHolder(layout);
-    }
-
-    //在这里加载ListView中没个item的布局
-    class ListHolder extends RecyclerView.ViewHolder{
-        public ListHolder(View itemView) {
-            super(itemView);
-            //如果是headerview或者是footerview,直接返回
-            if (itemView == mHeaderView){
-                return;
+        View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.xiangyu_item, parent, false);
+        final ViewHolder holder = new ViewHolder(layout);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Message message = mList.get(holder.getAdapterPosition()-1);
+                Intent intent = new Intent(MyApplication.getContext(), MessageActivity.class);
+                intent.putExtra(MessageActivity.MESSAGE_NAME, message.getText());
+                intent.putExtra(MessageActivity.MESSAGE_IMAGE_ID, message.getIamgeId());
+                MyApplication.getContext().startActivity(intent);
             }
-            if (itemView == mFooterView){
-                return;
-            }
-//            View view = LayoutInflater.from(mContext).inflate(R.layout.message_item, mparent, false);
-//            final ViewHolder holder = new ViewHolder(view);
-//            holder.cardView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    int position = holder.getAdapterPosition();
-//                    Message message = mList.get(position);
-//                    Intent intent = new Intent(mContext, MessageActivity.class);
-//                    intent.putExtra(MessageActivity.MESSAGE_NAME, message.getText());
-//                    intent.putExtra(MessageActivity.MESSAGE_IMAGE_ID, message.getIamgeId());
-//                    mContext.startActivity(intent);
-//                    Toast.makeText(mContext, "点击没问题", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-        }
+        });
+        return holder;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if(getItemViewType(position) == TYPE_NORMAL){
-            if(holder instanceof ViewHolder) {
-                //这里加载数据的时候要注意，是从position-1开始，因为position==0已经被header占用了
-                Message message = mList.get(position-1);
-                Glide.with(mContext).load(message.getIamgeId()).into(holder.image);
-                holder.text.setText(message.getText());
-                return;
-            }
+        if(getItemViewType(position) == TYPE_HEADER || getItemViewType(position) == TYPE_FOOTER)
             return;
-        }else if(getItemViewType(position) == TYPE_HEADER){
-            return;
-        }else{
-            return;
+        if (holder instanceof ViewHolder) {
+            //这里加载数据的时候要注意，是从position-1开始，因为position==0已经被header占用了
+            Message message = mList.get(position - 1);
+            Glide.with(MyApplication.getContext()).load(message.getIamgeId()).into(holder.image);
+            holder.text.setText(message.getText());
         }
     }
 
@@ -203,5 +163,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 }
             });
         }
+    }
+
+    interface OnItemClickListener {
+        void onItemClick(int position);
     }
 }

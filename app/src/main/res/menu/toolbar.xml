@@ -3,19 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
         <item
-            android:id="@+id/shouye"
-            android:icon="@drawable/shouye"
-            android:title="shouye"
-            app:showAsAction="always"
-            android:visible="true"
-            />
-        <item
-            android:id="@+id/gonglue"
-            android:icon="@drawable/gongluemin"
-            android:title="gonglue"
-            app:showAsAction="always"
-            />
-        <item
             android:id="@+id/recover2"
             android:icon="@drawable/recover"
             android:title="recover"
@@ -28,8 +15,8 @@
             app:showAsAction="always"
             />
         <item
-            android:id="@+id/place"
-            android:icon="@drawable/place"
+            android:id="@+id/local"
+            android:icon="@drawable/local"
             android:title="Search"
             app:showAsAction="always"/>
 </menu>

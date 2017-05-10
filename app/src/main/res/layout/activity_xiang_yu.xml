@@ -19,8 +19,8 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="#6699ff"
-                android:title=""
+                android:background="@color/background"
+                android:title="乡.遇"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_scrollFlags="scroll|enterAlways|snap"/>
@@ -32,26 +32,11 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <fragment
-                    android:id="@+id/fragment_viewPager"
-                    android:name="com.example.xiangyu.fragment.CustomAnimationFragment"
-                    android:layout_width="394dp"
-                    android:layout_height="180dp"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp" />
-
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-            </LinearLayout>
 
          </android.support.v4.widget.SwipeRefreshLayout>
 

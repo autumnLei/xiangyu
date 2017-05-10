@@ -1,54 +1,87 @@
 package com.example.xiangyu.ui;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.xiangyu.R;
-import com.example.xiangyu.adapter.MessageAdapter;
+import com.example.xiangyu.adapter.XiangYuAdapter;
 import com.example.xiangyu.entity.Message;
 import com.example.xiangyu.global.MyApplication;
+import com.example.xiangyu.loader.GlideImageLoader;
+import com.example.xiangyu.ui.nav.NavCollectionActivity;
+import com.example.xiangyu.ui.nav.NavHistoryActivity;
+import com.example.xiangyu.ui.nav.NavHomePageActivity;
+import com.example.xiangyu.ui.nav.NavNewsActivity;
+import com.youth.banner.Banner;
+import com.youth.banner.listener.OnBannerListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class XiangYuActivity extends AppCompatActivity {
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
-    private DrawerLayout mDrawerLayout;
-
+public class XiangYuActivity extends AppCompatActivity implements OnBannerListener {
+    static final int REFRESH_COMPLETE = 0X1112;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
+    @InjectView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    @InjectView(R.id.nav_view)
+    NavigationView navView;
+    @InjectView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    @InjectView(R.id.swipe_refresh)
+    SwipeRefreshLayout swipeRefresh;
+    @InjectView(R.id.fab)
+    FloatingActionButton fab;
     private List<Message> messages = new ArrayList<>();
+    private XiangYuAdapter adapter;
+    Banner banner;
 
-    private SwipeRefreshLayout swipeRefresh;
-
-    private MessageAdapter adapter;
-
+    private Handler mHandler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case REFRESH_COMPLETE:
+                    String[] urls = getResources().getStringArray(R.array.url);
+                    List list = Arrays.asList(urls);
+                    List arrayList = new ArrayList(list);
+                    //把新的图片地址加载到Banner
+                    banner.update(arrayList);
+                    //下拉刷新控件隐藏
+                    swipeRefresh.setRefreshing(false);
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_xiang_yu);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.inject(this);
+
         setSupportActionBar(toolbar);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navView = (NavigationView) findViewById(R.id.nav_view) ;
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -82,59 +115,38 @@ public class XiangYuActivity extends AppCompatActivity {
             }
         });
         //recyclerView布局初始化之RecyclerView三部曲
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         GridLayoutManager LayoutManager = new GridLayoutManager(this, 1);
         recyclerView.setLayoutManager(LayoutManager);
         initMessages();
-        adapter = new MessageAdapter(messages);
+        adapter = new XiangYuAdapter(messages);
         recyclerView.setAdapter(adapter);
+        //渲染header布局
+        View header = LayoutInflater.from(this).inflate(R.layout.xiangyu_header, null);
+        banner = (Banner) header.findViewById(R.id.banner);
+        banner.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, MyApplication.H / 4));
         //为RecyclerView添加HeaderView和FooterView
-        setHeaderView(recyclerView);
+        adapter.setmHeaderView(banner);
+        //setHeaderView(recyclerView);
         setFooterView(recyclerView);
+        //启动banner
+        banner.setImages(MyApplication.images)
+                .setImageLoader(new GlideImageLoader())
+                .start();
         //下拉刷新的更新操作
-        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
         swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refreshMessages();
+                mHandler.sendEmptyMessageDelayed(REFRESH_COMPLETE, 2000);
             }
         });
         //悬浮按钮的点击事件
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(XiangYuActivity.this, ForumActivity.class);
                 startActivity(intent);
-            }
-        });
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        //ViewPager滑动冲突解决
-        mViewPager.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                float mLastX = 0;
-
-                if (action == MotionEvent.ACTION_DOWN) {
-                    // 记录点击到ViewPager时候，手指的X坐标
-                    mLastX = event.getX();
-
-                }
-                if(action == MotionEvent.ACTION_MOVE) {
-                    // 超过阈值
-                    if(Math.abs(event.getX() - mLastX) > 31f) {
-                        swipeRefresh.setEnabled(false);
-                        recyclerView.requestDisallowInterceptTouchEvent(true);
-                    }
-                }
-                if(action == MotionEvent.ACTION_UP) {
-                    // 用户抬起手指，恢复父布局状态
-                    recyclerView.requestDisallowInterceptTouchEvent(false);
-                    swipeRefresh.setEnabled(true);
-                }
-                return false;
             }
         });
     }
@@ -153,40 +165,20 @@ public class XiangYuActivity extends AppCompatActivity {
                 Intent intent2 = new Intent(this, SearchActivity.class);
                 startActivity(intent2);
                 break;
-            case R.id.place:
+            case R.id.local:
                 Intent intent = new Intent(this, LocationActivity.class);
                 startActivity(intent);
                 break;
             case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
+                drawerLayout.openDrawer(GravityCompat.START);
                 break;
-            case R.id.gonglue:
-                Intent intent3 = new Intent(this, GongLueActivity.class);
-                startActivity(intent3);
             default:
                 break;
         }
         return true;
     }
 
-    //初始化RecyclerView内所有信息
-    private void initMessages() {
-        messages.clear();
-        Random random = new Random();
-        int index = random.nextInt(3);
-        for (int i = index; i < 6; i++) {
-            Message tianmenshan = new Message(R.drawable.tianmenshan, "天门山景区，位于张家界市城区南郊8公里，国家5A级旅游区，是山岳型自然景区。总面积96平方公里，山顶面积达2平方公里。天门山景区主峰海拔 1518.6米，是张家界海拔最高的山，古称嵩梁山，又名梦山、方壶山。");
-            messages.add(tianmenshan);
-            Message daxiaogu = new Message(R.drawable.daxiagu, "张家界大峡谷原来有两个名字，一个叫做烂船峡：来源与神泉溪，整个大峡谷和南方红旗渠的水流都来源于这里，传说以前从泉眼中涌出过很多烂了的船板，当地人们又无法知晓烂船板从何而来，所以这里得名“烂船峡”；另外一个名字叫做乱泉峡：是指峡谷中的两面石壁，溪泉众多，满峡飞流。");
-            messages.add(daxiaogu);
-            Message huanglongdong = new Message(R.drawable.huanglongdong, "属典型的喀斯特岩溶地貌，被列为国际旅游洞穴会员、全国35个王牌景点之一、中国首批AAAA级旅游区（点）、中国旅游首批知名品牌、湖南省最佳旅游景区、湖南省著名商标、张家界旅游精品线之一，享有绝世奇观之美誉。");
-            messages.add(huanglongdong);
-            Message xianrenxi = new Message(R.drawable.xianrenxi, "相传曾有人看到仙女在溪涧中淋浴梳妆，故称仙人溪，又名仙女溪。溪涧分布着200余种树木，180多种动物，森林覆盖率达98%左右，空气中的芬多精特别丰富，具有杀菌作用，对治疗疾病有良好的效用，是进行“森林浴”的好去处。");
-            messages.add(xianrenxi);
-        }
-    }
-
-    //刷新recycl
+    //刷新recyclerview
     private void refreshMessages() {
         new Thread(new Runnable() {
             @Override
@@ -208,18 +200,29 @@ public class XiangYuActivity extends AppCompatActivity {
         }).start();
     }
 
-    private void setHeaderView(RecyclerView view) {
-        View header = LayoutInflater.from(this).inflate(R.layout.message_header, view, false);
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        transaction.replace(R.id.);
-        adapter.setmHeaderView(header);
+    //初始化RecyclerView内所有信息
+    private void initMessages() {
+        messages.clear();
+        Random random = new Random();
+        int index = random.nextInt(3);
+        for (int i = index; i < 6; i++) {
+            Message tianmenshan = new Message(R.drawable.tianmenshan, "天门山景区，位于张家界市城区南郊8公里，国家5A级旅游区，是山岳型自然景区。总面积96平方公里，山顶面积达2平方公里。天门山景区主峰海拔 1518.6米，是张家界海拔最高的山，古称嵩梁山，又名梦山、方壶山。");
+            messages.add(tianmenshan);
+            Message daxiaogu = new Message(R.drawable.daxiagu, "张家界大峡谷原来有两个名字，一个叫做烂船峡：来源与神泉溪，整个大峡谷和南方红旗渠的水流都来源于这里，传说以前从泉眼中涌出过很多烂了的船板，当地人们又无法知晓烂船板从何而来，所以这里得名“烂船峡”；另外一个名字叫做乱泉峡：是指峡谷中的两面石壁，溪泉众多，满峡飞流。");
+            messages.add(daxiaogu);
+            Message huanglongdong = new Message(R.drawable.huanglongdong, "属典型的喀斯特岩溶地貌，被列为国际旅游洞穴会员、全国35个王牌景点之一、中国首批AAAA级旅游区（点）、中国旅游首批知名品牌、湖南省最佳旅游景区、湖南省著名商标、张家界旅游精品线之一，享有绝世奇观之美誉。");
+            messages.add(huanglongdong);
+            Message xianrenxi = new Message(R.drawable.xianrenxi, "相传曾有人看到仙女在溪涧中淋浴梳妆，故称仙人溪，又名仙女溪。溪涧分布着200余种树木，180多种动物，森林覆盖率达98%左右，空气中的芬多精特别丰富，具有杀菌作用，对治疗疾病有良好的效用，是进行“森林浴”的好去处。");
+            messages.add(xianrenxi);
+        }
     }
 
     private void setFooterView(RecyclerView view) {
-        View footer = LayoutInflater.from(this).inflate(R.layout.message_footer, view, false);
+        View footer = LayoutInflater.from(this).inflate(R.layout.xiangyu_footer, view, false);
         adapter.setmFooterView(footer);
     }
 
-
+    public void OnBannerClick(int position) {
+        Toast.makeText(getApplicationContext(), "你点击了：" + position, Toast.LENGTH_SHORT).show();
+    }
 }

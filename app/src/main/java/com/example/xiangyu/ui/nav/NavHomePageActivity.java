@@ -1,4 +1,4 @@
-package com.example.xiangyu.ui;
+package com.example.xiangyu.ui.nav;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,12 +9,12 @@ import android.view.View;
 
 import com.example.xiangyu.R;
 
-public class Activity extends AppCompatActivity {
+public class NavHomePageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_);
+        setContentView(R.layout.activity_mhome_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

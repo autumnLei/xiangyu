@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="recovery-0.0.8">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.android/build-cache/4556a0da5007dec1eb2ecf8e3a2d7dcd2c40a90b/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/4556a0da5007dec1eb2ecf8e3a2d7dcd2c40a90b/output/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.zxy.android/recovery/0.0.8/8d1e5d27232c45b5e0285d657e660c78a7f1e2c8/recovery-0.0.8-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

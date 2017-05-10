@@ -1,4 +1,4 @@
-package com.example.xiangyu.ui;
+package com.example.xiangyu.ui.nav;
 
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.example.xiangyu.R;
 
-public class NavHistoryActivity extends AppCompatActivity {
+public class NavNewsActivity extends AppCompatActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -40,7 +40,7 @@ public class NavHistoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mhistory);
+        setContentView(R.layout.activity_mnews);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -68,7 +68,7 @@ public class NavHistoryActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_mhistory, menu);
+        getMenuInflater().inflate(R.menu.menu_mnews, menu);
         return true;
     }
 
@@ -115,7 +115,7 @@ public class NavHistoryActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_mhistory, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_mnews, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
