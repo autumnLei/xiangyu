@@ -28,9 +28,9 @@ import com.example.xiangyu.global.MyApplication;
 import com.example.xiangyu.loader.GlideImageLoader;
 import com.example.xiangyu.ui.nav.NavCollectionActivity;
 import com.example.xiangyu.ui.nav.NavHistoryActivity;
-import com.example.xiangyu.ui.nav.NavHomePageActivity;
 import com.example.xiangyu.ui.nav.NavNewsActivity;
 import com.youth.banner.Banner;
+import com.youth.banner.Transformer;
 import com.youth.banner.listener.OnBannerListener;
 
 import java.util.ArrayList;
@@ -78,6 +78,7 @@ public class XiangYuActivity extends AppCompatActivity implements OnBannerListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_xiang_yu);
         ButterKnife.inject(this);
 
@@ -93,8 +94,8 @@ public class XiangYuActivity extends AppCompatActivity implements OnBannerListen
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_own:
-                        Intent intent = new Intent(MyApplication.getContext(), NavHomePageActivity.class);
-                        startActivity(intent);
+//                        Intent intent = new Intent(MyApplication.getContext(), NavHomePageActivity.class);
+//                        startActivity(intent);
                         break;
                     case R.id.nav_news:
                         Intent intent2 = new Intent(MyApplication.getContext(), NavNewsActivity.class);
@@ -131,6 +132,7 @@ public class XiangYuActivity extends AppCompatActivity implements OnBannerListen
         //启动banner
         banner.setImages(MyApplication.images)
                 .setImageLoader(new GlideImageLoader())
+                .setBannerAnimation(Transformer.DepthPage)
                 .start();
         //下拉刷新的更新操作
         swipeRefresh.setColorSchemeResources(R.color.colorPrimary);

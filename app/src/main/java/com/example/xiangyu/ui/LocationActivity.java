@@ -24,6 +24,7 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.example.xiangyu.R;
+import com.example.xiangyu.global.MyApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +101,7 @@ public class LocationActivity extends AppCompatActivity {
                 if (grantResults.length > 0) {
                     for (int result : grantResults) {
                         if (result != PackageManager.PERMISSION_GRANTED) {
-                            Toast.makeText(this, "需要权限才能正常使用本程序", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "需要权限才能正常使用本功能", Toast.LENGTH_SHORT).show();
                             finish();
                             return;
                         }
@@ -133,31 +134,32 @@ public class LocationActivity extends AppCompatActivity {
 
     private void navigateTo(BDLocation location) {
         final BDLocation mlocation = location;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (isFirstLocate) {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (isFirstLocate) {
                     LatLng ll = new LatLng(mlocation.getLatitude(), mlocation.getLongitude());
                     MapStatusUpdate update = MapStatusUpdateFactory.newLatLng(ll);
                     baiduMap.animateMapStatus(update);
-                    update = MapStatusUpdateFactory.zoomTo(16f);
+                    update = MapStatusUpdateFactory.zoomTo(18);
                     baiduMap.animateMapStatus(update);
                     isFirstLocate = false;
-                }
+//                }
                 MyLocationData.Builder locationBuilder = new MyLocationData.Builder();
                 locationBuilder.latitude(mlocation.getLatitude());
                 locationBuilder.longitude(mlocation.getLongitude());
                 MyLocationData locationData = locationBuilder.build();
                 baiduMap.setMyLocationData(locationData);
-            }
-        }).start();
+//            }
+//        }).start();
 
     }
 
     private void initLocation() {
         LocationClientOption option = new LocationClientOption();
-        option.setScanSpan(1000);
+        option.setScanSpan(5000);
         option.setIsNeedAddress(true);
+        option.setLocationMode(LocationClientOption.LocationMode.Device_Sensors);
         mLocationClient.setLocOption(option);
     }
 

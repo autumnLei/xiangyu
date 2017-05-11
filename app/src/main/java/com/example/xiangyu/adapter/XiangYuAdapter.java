@@ -83,7 +83,7 @@ public class XiangYuAdapter extends RecyclerView.Adapter<XiangYuAdapter.ViewHold
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         mparent = parent;
         if(mHeaderView != null && viewType == TYPE_HEADER) {
             return new ViewHolder(mHeaderView);
@@ -100,7 +100,7 @@ public class XiangYuAdapter extends RecyclerView.Adapter<XiangYuAdapter.ViewHold
                 Intent intent = new Intent(MyApplication.getContext(), MessageActivity.class);
                 intent.putExtra(MessageActivity.MESSAGE_NAME, message.getText());
                 intent.putExtra(MessageActivity.MESSAGE_IMAGE_ID, message.getIamgeId());
-                MyApplication.getContext().startActivity(intent);
+                parent.getContext().startActivity(intent);
             }
         });
         return holder;
