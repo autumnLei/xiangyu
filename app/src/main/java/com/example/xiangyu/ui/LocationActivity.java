@@ -1,13 +1,19 @@
 package com.example.xiangyu.ui;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -23,6 +29,7 @@ import com.example.xiangyu.global.MyApplication;
 import com.example.xiangyu.service.LocationService;
 import com.example.xiangyu.service.Utils;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import butterknife.ButterKnife;
@@ -41,7 +48,6 @@ public class LocationActivity extends Activity {
     TextView text;
     private MapView mMapView = null;
     private BaiduMap mBaiduMap;
-//    private Button reset;
     private LocationService locService;
     private LinkedList<LocationEntity> locationList = new LinkedList<LocationEntity>(); // 存放历史定位结果的链表，最大存放当前结果的前5次定位结果
 
@@ -53,10 +59,9 @@ public class LocationActivity extends Activity {
         setContentView(R.layout.activity_location);
         ButterKnife.inject(this);
         mMapView = (MapView) findViewById(R.id.bmapView);
-//        reset = (Button) findViewById(R.id.clear);
         mBaiduMap = mMapView.getMap();
         mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
-        mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomTo(18.5F));
+        mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomTo(18));
         //
         mBaiduMap.setMyLocationEnabled(true);
         //
@@ -66,7 +71,52 @@ public class LocationActivity extends Activity {
         mOption.setCoorType("bd09ll");
         locService.setLocationOption(mOption);
         locService.registerListener(listener);
+        getPersimmilns();
         locService.start();
+
+
+
+    }
+
+    private void getPersimmilns() {
+        ArrayList<String> permissionList = new ArrayList<>();
+        permissionList.clear();
+        // 定位精确位置
+        if(ContextCompat.checkSelfPermission(LocationActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if(ContextCompat.checkSelfPermission(LocationActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+        // 读写权限
+        if(ContextCompat.checkSelfPermission(LocationActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (!permissionList.isEmpty()) {
+            String[] permissions = permissionList.toArray(new String[permissionList.size()]);
+            ActivityCompat.requestPermissions(LocationActivity.this, permissions, 1);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0) {
+                    for (int result : grantResults) {
+                        if (result != PackageManager.PERMISSION_GRANTED) {
+                            Toast.makeText(this, "必需同意所有权限才能使用本功能", Toast.LENGTH_SHORT).show();
+                            finish();
+                            return;
+                        }
+                    }
+                } else {
+                    Toast.makeText(this, "发生未知错误", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+                break;
+            default:
+        }
     }
 
     /***
@@ -77,7 +127,6 @@ public class LocationActivity extends Activity {
         @Override
         public void onReceiveLocation(BDLocation location) {
             // TODO Auto-generated method stub
-
             if (location != null && (location.getLocType() == 161 || location.getLocType() == 66)) {
                 Message locMsg = locHander.obtainMessage();
                 Bundle locData;
@@ -88,16 +137,32 @@ public class LocationActivity extends Activity {
                     locHander.sendMessage(locMsg);
                 }
             }
-
-            StringBuffer currentPosition = new StringBuffer();
-            currentPosition.append("你所在的位置是");
-            currentPosition.append(":").append(location.getProvince());
-            currentPosition.append("/").append(location.getCity());
-            currentPosition.append("/").append(location.getDistrict());
-            currentPosition.append("/").append(location.getStreet());
-            text.setText(currentPosition);
+            final BDLocation mLocation = location;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            StringBuffer currentPosition = new StringBuffer();
+                            currentPosition.append("addr:");
+                            currentPosition.append(mLocation.getProvince());
+                            currentPosition.append(mLocation.getCity());
+                            currentPosition.append(mLocation.getDistrict());
+                            currentPosition.append(mLocation.getStreet());
+                            if (mLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
+                                currentPosition.append(" loctype:网络定位");
+                            } else if (mLocation.getLocType() == BDLocation.TypeGpsLocation) {
+                                currentPosition.append(" loctype:gps定位");
+                            } else if (mLocation.getLocType() == BDLocation.TypeOffLineLocation) {
+                                currentPosition.append(" loctype:离线定位");
+                            }
+                            text.setText(currentPosition);
+                        }
+                    });
+                }
+            }).start();
         }
-
         public void onConnectHotSpotMessage(String s, int i) {
 
         }
@@ -147,7 +212,6 @@ public class LocationActivity extends Activity {
             newLocation.location = location;
             newLocation.time = System.currentTimeMillis();
             locationList.add(newLocation);
-
         }
         return locData;
     }
@@ -163,7 +227,7 @@ public class LocationActivity extends Activity {
             super.handleMessage(msg);
             try {
                 BDLocation location = msg.getData().getParcelable("loc");
-                int iscal = msg.getData().getInt("iscalculate");
+//                int iscal = msg.getData().getInt("iscalculate");
                 if (location != null) {
                     LatLng point = new LatLng(location.getLatitude(), location.getLongitude());
 //                    // 构建Marker图标
@@ -179,7 +243,6 @@ public class LocationActivity extends Activity {
                     locationBuilder.longitude(location.getLongitude());
                     MyLocationData locationData = locationBuilder.build();
                     mBaiduMap.setMyLocationData(locationData);
-
                     // 构建MarkerOption，用于在地图上添加Marker
 //                    OverlayOptions option = new MarkerOptions().position(point).icon(bitmap);
                     // 在地图上添加Marker，并显示
@@ -201,20 +264,21 @@ public class LocationActivity extends Activity {
         locService.unregisterListener(listener);
         locService.stop();
         mMapView.onDestroy();
+        mBaiduMap.setMyLocationEnabled(false);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         // 在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
-        mMapView.onResume();
+        mMapView.onResume();mBaiduMap.clear();
 //        reset.setOnClickListener(new OnClickListener() {
 //
 //            @Override
 //            public void onClick(View v) {
 //                // TODO Auto-generated method stub
 //                if (mBaiduMap != null)
-//                    mBaiduMap.clear();
+//
 //            }
 //        });
     }
