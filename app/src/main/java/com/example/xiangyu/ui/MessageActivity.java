@@ -42,9 +42,9 @@ public class MessageActivity extends AppCompatActivity {
 
     private String generateMessageContent(String messageName) {
         StringBuilder messageContent = new StringBuilder();
-        for (int i = 0; i < 900; i++) {
+
             messageContent.append(messageName);
-        }
+
         return messageContent.toString();
     }
 

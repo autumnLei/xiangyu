@@ -27,12 +27,14 @@ public class XiangYuAdapter extends RecyclerView.Adapter<XiangYuAdapter.ViewHold
     public static final int TYPE_HEADER = 0;  //说明是带有Header的
     public static final int TYPE_FOOTER = 1;  //说明是带有Footer的
     public static final int TYPE_NORMAL = 2;  //说明是不带有header和footer的
+    public static final int TYPE_BUTTON = 3;  //说明是button
 
     //从XiangYuActivity过来的数据
     private List<Message> mList;
 
     private static View mHeaderView;
     private static View mFooterView;
+    private static View mButtonView;
 
     //只有初始化item会用到
     private ViewGroup mparent;
@@ -50,7 +52,7 @@ public class XiangYuAdapter extends RecyclerView.Adapter<XiangYuAdapter.ViewHold
 
         public ViewHolder(View view) {
             super(view);
-            if (view == mHeaderView || view == mFooterView){
+            if (view == mHeaderView || view == mFooterView  || view == mFooterView ){
                 return;
             }
             image = (ImageView) view.findViewById(R.id.message_image);
@@ -82,21 +84,27 @@ public class XiangYuAdapter extends RecyclerView.Adapter<XiangYuAdapter.ViewHold
         notifyItemInserted(getItemCount()-1);
     }
 
+    public void setmButtonView(View mButtonView) {
+        this.mButtonView = mButtonView;
+        notifyItemInserted(1);
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         mparent = parent;
         if(mHeaderView != null && viewType == TYPE_HEADER) {
             return new ViewHolder(mHeaderView);
-        }
-        else if(mFooterView != null && viewType == TYPE_FOOTER){
+        } else if(mFooterView != null && viewType == TYPE_FOOTER){
             return new ViewHolder(mFooterView);
+        } else if (mButtonView != null && viewType == TYPE_BUTTON) {
+            return new ViewHolder(mButtonView);
         }
         View layout = LayoutInflater.from(parent.getContext()).inflate(R.layout.xiangyu_item, parent, false);
         final ViewHolder holder = new ViewHolder(layout);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Message message = mList.get(holder.getAdapterPosition()-1);
+                Message message = mList.get(holder.getAdapterPosition()-2);
                 Intent intent = new Intent(MyApplication.getContext(), MessageActivity.class);
                 intent.putExtra(MessageActivity.MESSAGE_NAME, message.getText());
                 intent.putExtra(MessageActivity.MESSAGE_IMAGE_ID, message.getIamgeId());
@@ -108,11 +116,11 @@ public class XiangYuAdapter extends RecyclerView.Adapter<XiangYuAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if(getItemViewType(position) == TYPE_HEADER || getItemViewType(position) == TYPE_FOOTER)
+        if(getItemViewType(position) == TYPE_HEADER || getItemViewType(position) == TYPE_FOOTER || getItemViewType(position) == TYPE_BUTTON)
             return;
         if (holder instanceof ViewHolder) {
             //这里加载数据的时候要注意，是从position-1开始，因为position==0已经被header占用了
-            Message message = mList.get(position - 1);
+            Message message = mList.get(position - 2);
             Glide.with(MyApplication.getContext()).load(message.getIamgeId()).into(holder.image);
             holder.text.setText(message.getText());
         }
@@ -132,6 +140,10 @@ public class XiangYuAdapter extends RecyclerView.Adapter<XiangYuAdapter.ViewHold
         if (position == getItemCount()-1){
             //最后一个,应该加载Footer
             return TYPE_FOOTER;
+        }
+        if (position == 1){
+            //第二个 加载button
+            return TYPE_BUTTON;
         }
         return TYPE_NORMAL;
     }

@@ -2,44 +2,48 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.example.xiangyu.ui.SearchActivity">
 
     <android.support.v7.widget.SearchView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:defaultQueryHint="搜索"
-        >
+        app:defaultQueryHint="搜索">
 
     </android.support.v7.widget.SearchView>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="0.4dp"
-        android:background="#000000"
-        />
+        android:background="#000000" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="  仙人溪"
-        android:textSize="15sp"
+        android:gravity="right"
+        android:text="搜索记录" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:layout_marginTop="5dp"
-        />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="  天门山"
-        android:textSize="22sp"
-        android:layout_marginTop="8dp"/>
+        android:hint="  仙人溪"
+        android:textSize="15sp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:hint="  张家界大峡谷"
-        android:textSize="19sp"
-        android:layout_marginTop="5dp"/>
+        android:textSize="19sp" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="  天门山"
+        android:textSize="22sp" />
 </LinearLayout>

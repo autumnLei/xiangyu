@@ -4,13 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="180dp"
     android:padding="10dp"
-    android:background="@color/background">
+    android:background="@drawable/nav0">
 
     <de.hdodenhof.circleimageview.CircleImageView
+        android:clickable="true"
+        android:onClick="Login"
         android:id="@+id/icon_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/touxiang"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/avatar0"
         android:layout_gravity="center_horizontal"
         android:layout_centerInParent="true"/>
 
@@ -18,7 +20,7 @@
         android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="july"
+        android:text=""
         android:textColor="#FFF"
         android:textSize="14sp"/>
 
@@ -26,7 +28,7 @@
         android:id="@+id/mail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="july.breeze.hl@gmail.com"
+        android:text=""
         android:textColor="#FFF"
         android:textSize="14sp"/>
 </LinearLayout>

@@ -71,7 +71,9 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString("password", password);
                     editor.apply();
                     Intent intent = new Intent(LoginActivity.this, XiangYuActivity.class);
+                    intent.putExtra("login", "ok");
                     startActivity(intent);
+                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                     overridePendingTransition(R.anim.screen_zoom_in, R.anim.screen_zoom_out);
                     finish();
                 } else {
@@ -94,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.screen_zoom_in, R.anim.screen_zoom_out);
+                finish();
             }
         });
 

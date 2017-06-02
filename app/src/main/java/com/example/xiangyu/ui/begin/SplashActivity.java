@@ -41,31 +41,21 @@ public class SplashActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
-                String account = pref.getString("account", "");
-                String password = pref.getString("password", "");
-
-                if (account.equals("admin") && password.equals("123456"))
-                {
-                    Intent intent = new Intent(SplashActivity.this, XiangYuActivity.class);
-                    startActivity(intent);
-                } else {
-                    Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(SplashActivity.this, XiangYuActivity.class);
+                startActivity(intent);
                 overridePendingTransition(R.anim.screen_zoom_in, R.anim.screen_zoom_out);
                 finish();
             }
         }, 1300);
     }
 
-    @Override
-    public void onBackPressed() {
-        // super.onBackPressed(); 	不要调用父类的方法
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        startActivity(intent);
-    }
+//    @Override
+//    public void onBackPressed() {
+//        // super.onBackPressed(); 	不要调用父类的方法
+//        Intent intent = new Intent(Intent.ACTION_MAIN);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intent.addCategory(Intent.CATEGORY_HOME);
+//        startActivity(intent);
+//    }
 
 }

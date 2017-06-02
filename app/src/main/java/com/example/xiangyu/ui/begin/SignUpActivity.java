@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.xiangyu.R;
@@ -45,7 +46,9 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (true) {
+                    Toast.makeText(SignUpActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(SignUpActivity.this, XiangYuActivity.class);
+                    intent.putExtra("login", "ok");
                     startActivity(intent);
                     overridePendingTransition(R.anim.screen_zoom_in, R.anim.screen_zoom_out);
                     finish();

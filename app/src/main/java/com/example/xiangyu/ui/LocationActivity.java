@@ -73,9 +73,6 @@ public class LocationActivity extends Activity {
         locService.registerListener(listener);
         getPersimmilns();
         locService.start();
-
-
-
     }
 
     private void getPersimmilns() {
@@ -145,18 +142,18 @@ public class LocationActivity extends Activity {
                         @Override
                         public void run() {
                             StringBuffer currentPosition = new StringBuffer();
-                            currentPosition.append("addr:");
+                            currentPosition.append("定位城市：");
                             currentPosition.append(mLocation.getProvince());
                             currentPosition.append(mLocation.getCity());
-                            currentPosition.append(mLocation.getDistrict());
-                            currentPosition.append(mLocation.getStreet());
-                            if (mLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
-                                currentPosition.append(" loctype:网络定位");
-                            } else if (mLocation.getLocType() == BDLocation.TypeGpsLocation) {
-                                currentPosition.append(" loctype:gps定位");
-                            } else if (mLocation.getLocType() == BDLocation.TypeOffLineLocation) {
-                                currentPosition.append(" loctype:离线定位");
-                            }
+//                            currentPosition.append(mLocation.getDistrict());
+//                            currentPosition.append(mLocation.getStreet());
+//                            if (mLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
+//                                currentPosition.append(" loctype:网络定位");
+//                            } else if (mLocation.getLocType() == BDLocation.TypeGpsLocation) {
+//                                currentPosition.append(" loctype:gps定位");
+//                            } else if (mLocation.getLocType() == BDLocation.TypeOffLineLocation) {
+//                                currentPosition.append(" loctype:离线定位");
+//                            }
                             text.setText(currentPosition);
                         }
                     });

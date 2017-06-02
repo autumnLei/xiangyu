@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="url4">
-        <item>http://img.zcool.cn/community/01b72057a7e0790000018c1bf4fce0.png</item>
-        <item>http://img.zcool.cn/community/01fca557a7f5f90000012e7e9feea8.jpg</item>
-        <item>http://img.zcool.cn/community/01996b57a7f6020000018c1bedef97.jpg</item>
+        <item>https://cdn.pixabay.com/photo/2015/11/22/11/22/badminton-1056128_960_720.jpg</item>
+        <item>http://bpic.588ku.com/back_pic/04/18/84/44582ac757ea22e.jpg!ww650</item>
+        <item>https://cdn.pixabay.com/photo/2013/05/02/21/23/uss-nimitz-108622_960_720.jpg</item>
         <item>http://img.zcool.cn/community/01700557a7f42f0000018c1bd6eb23.jpg</item>
     </array>
     <array name="url">
@@ -24,4 +24,25 @@
         <item>以诚感人者，人亦诚而应。</item>
         <item>习惯改变命运，细节铸就终身。</item>
     </array>
+    <string-array name="日期">
+        <item >星期一</item>
+        <item >星期二</item>
+        <item >星期三</item>
+        <item >星期四</item>
+        <item >星期五</item>
+        <item >星期六</item>
+        <item >星期天</item>
+    </string-array>
+    <string-array name="排序">
+        <item>价格最低</item>
+        <item>距离最近</item>
+        <item>综合排序</item>
+    </string-array>
+    <string-array name="区域">
+        <item>所有区域</item>
+    </string-array>
+    <string-array name="筛选">
+        <item>室内</item>
+    </string-array>
+
 </resources>
