@@ -2,6 +2,7 @@ package com.example.xiangyu.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  * Created by zhouwei on 16/12/23.
  */
 
-public class ButtonSportsAdapter extends FragmentStatePagerAdapter {
+public class ButtonSportsAdapter extends FragmentPagerAdapter {
     private List<Fragment> mFragments ;
     private List<String> mTitles ;
     public ButtonSportsAdapter(FragmentManager fm, List<Fragment> fragments, List<String> titles) {

@@ -3,20 +3,37 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:id="@+id/nav_news"
-            android:icon="@drawable/news"
-            android:title="我的预约" />
-        <item
             android:id="@+id/nav_own"
             android:icon="@drawable/user"
-            android:title="我的好友" />
+            android:title="我的主页" />
+        <!--<item-->
+        <!--android:id="@+id/nav_news"-->
+        <!--android:icon="@drawable/news"-->
+        <!--android:title="我的预约" />-->
+        <!--<item-->
+        <!--android:id="@+id/nav_frends"-->
+        <!--android:icon="@drawable/frends"-->
+        <!--android:title="我的好友" />-->
+        <!--<item-->
+        <!--android:id="@+id/nav_collection"-->
+        <!--android:icon="@drawable/star"-->
+        <!--android:title="我的收藏" />-->
+        <!--<item-->
+        <!--android:id="@+id/nav_history"-->
+        <!--android:icon="@drawable/clock"-->
+        <!--android:title="关于LSports" />-->
         <item
-            android:id="@+id/nav_history"
-            android:icon="@drawable/clock"
-            android:title="游览历史" />
-        <item
-            android:id="@+id/nav_collection"
-            android:icon="@drawable/star"
+            android:id="@+id/nav_feedback"
+            android:icon="@drawable/feedback"
             android:title="信息反馈" />
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/about"
+            android:title="关于LSports" />
+        <item
+            android:id="@+id/nav_quit"
+            android:icon="@drawable/quit"
+            android:title="退出应用" />
+
     </group>
 </menu>

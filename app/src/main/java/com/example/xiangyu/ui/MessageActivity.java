@@ -15,29 +15,34 @@ import com.example.xiangyu.R;
 
 public class MessageActivity extends AppCompatActivity {
 
-    public static final String MESSAGE_NAME = "message_name";
+    public static final String MESSAGE_TITLE = "message_name";
 
-    public static final String MESSAGE_IMAGE_ID = "message_image_id";
+    public static final String MESSAGE_CONTENT = "message_content";
+
+    public static final String MESSAGE_IMAGE_URL = "message_image_url";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
         Intent intent = getIntent();
-        String messageName = intent.getStringExtra(MESSAGE_NAME);
-        int messageImgeId = intent.getIntExtra(MESSAGE_IMAGE_ID, 0);
+        String title = intent.getStringExtra(MESSAGE_TITLE);
+        String content = intent.getStringExtra(MESSAGE_CONTENT);
+        String image = intent.getStringExtra(MESSAGE_IMAGE_URL);
+        //分别找到对应id
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        ImageView messageImageView = (ImageView) findViewById(R.id.message_image_view);
-        TextView messageContentText = (TextView) findViewById(R.id.message_content_text);
+        ImageView messageImage = (ImageView) findViewById(R.id.message_image);
+        TextView messageContent = (TextView) findViewById(R.id.message_content);
+        //设置toolbar
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        collapsingToolbar.setTitle(messageName);
-        Glide.with(this).load(messageImgeId).into(messageImageView);
-        String messageContent = generateMessageContent(messageName);
-        messageContentText.setText(messageContent);
+        //分别设置
+        collapsingToolbar.setTitle(title);
+        Glide.with(this).load(R.drawable.avatar0).into(messageImage);       //暂时还没图片 所以设置为默认图
+        messageContent.setText(generateMessageContent(content));
     }
 
     private String generateMessageContent(String messageName) {

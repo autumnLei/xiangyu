@@ -57,10 +57,10 @@ public class MyApplication extends Application {
                 .init(this);
 
         String[] urls = getResources().getStringArray(R.array.url4);
-        String[] tips = getResources().getStringArray(R.array.title);
+//        String[] tips = getResources().getStringArray(R.array.title);
         List list = Arrays.asList(urls);
         images = new ArrayList<>(list);
-        titles= Arrays.asList(tips);
+//        titles= Arrays.asList(tips);
     }
 
     /**

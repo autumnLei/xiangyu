@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.xiangyu.ui.buttons.PictureActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/background"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_scrollFlags="scroll|enterAlways|snap"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+    </android.support.v7.widget.Toolbar>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="220dp">
+
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@mipmap/ic_launcher"/>
+    </FrameLayout>
+
+    <TextView
+        android:layout_margin="4dp"
+        android:id="@+id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" 检查更新"
+        android:layout_gravity="center_vertical"
+        android:textSize="18sp"
+        android:background="#FFF5F2F2"/>
+
+    <TextView
+        android:layout_margin="4dp"
+        android:id="@+id/text2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="2dp"
+        android:text=" 更新日志"
+        android:textSize="18sp"
+        android:background="#FFF5F2F2"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="12sp"
+        android:text=" 用到的开源库\n
+    compile 'com.android.support:appcompat-v7:25.3.0'\n
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'\n
+    compile 'com.android.support:design:25.3.0'\n
+    compile 'de.hdodenhof:circleimageview:2.1.0'\n
+    compile 'com.android.support:recyclerview-v7:25.3.0'\n
+    compile 'com.github.bumptech.glide:glide:3.7.0'\n
+    compile 'com.android.support:cardview-v7:25.3.0'\n
+    compile 'com.android.support:support-v4:25.3.0'\n
+    compile 'com.google.android.gms:play-services-ads:10.2.1'\n
+    compile 'com.youth.banner:banner:1.4.9'\n
+    compile 'com.zxy.android:recovery:0.0.8'\n
+    compile 'com.jakewharton:butterknife:5.1.1'\n
+    testCompile 'junit:junit:4.12'\n
+    compile 'org.jsoup:jsoup:1.10.2'"/>
+
+    </LinearLayout>

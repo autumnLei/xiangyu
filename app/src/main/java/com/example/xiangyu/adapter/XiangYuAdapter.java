@@ -15,6 +15,7 @@ import com.example.xiangyu.R;
 import com.example.xiangyu.entity.Message;
 import com.example.xiangyu.global.MyApplication;
 import com.example.xiangyu.ui.MessageActivity;
+import com.example.xiangyu.ui.SearchActivity;
 
 import java.util.List;
 
@@ -48,15 +49,17 @@ public class XiangYuAdapter extends RecyclerView.Adapter<XiangYuAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView image;
         TextView text;
+        TextView text2;
 
 
         public ViewHolder(View view) {
             super(view);
-            if (view == mHeaderView || view == mFooterView  || view == mFooterView ){
+            if (view == mHeaderView|| view == mFooterView || view == mButtonView){
                 return;
             }
             image = (ImageView) view.findViewById(R.id.message_image);
             text = (TextView) view.findViewById(R.id.message_text);
+            text2 = (TextView) view.findViewById(R.id.message_content);
         }
 
     }
@@ -105,10 +108,15 @@ public class XiangYuAdapter extends RecyclerView.Adapter<XiangYuAdapter.ViewHold
             @Override
             public void onClick(View v) {
                 Message message = mList.get(holder.getAdapterPosition()-2);
-                Intent intent = new Intent(MyApplication.getContext(), MessageActivity.class);
-                intent.putExtra(MessageActivity.MESSAGE_NAME, message.getText());
-                intent.putExtra(MessageActivity.MESSAGE_IMAGE_ID, message.getIamgeId());
+                Intent intent = new Intent(MyApplication.getContext(), SearchActivity.class);
+                intent.putExtra("Url", message.getContent());
                 parent.getContext().startActivity(intent);
+                //////////////////////暂时不跳转到详情页面  转到webview
+//                Intent intent = new Intent(MyApplication.getContext(), MessageActivity.class);
+//                intent.putExtra(MessageActivity.MESSAGE_TITLE, message.getTitle());
+//                intent.putExtra(MessageActivity.MESSAGE_IMAGE_URL, message.getIamge());
+//                intent.putExtra(MessageActivity.MESSAGE_CONTENT, message.getContent());
+//                parent.getContext().startActivity(intent);
             }
         });
         return holder;
@@ -121,8 +129,13 @@ public class XiangYuAdapter extends RecyclerView.Adapter<XiangYuAdapter.ViewHold
         if (holder instanceof ViewHolder) {
             //这里加载数据的时候要注意，是从position-1开始，因为position==0已经被header占用了
             Message message = mList.get(position - 2);
-            Glide.with(MyApplication.getContext()).load(message.getIamgeId()).into(holder.image);
-            holder.text.setText(message.getText());
+            if (message.getIamge() != null){
+                Glide.with(MyApplication.getContext()).load(message.getIamge()).into(holder.image);
+            } else {
+                Glide.with(MyApplication.getContext()).load(R.drawable.xianrenxi).into(holder.image);
+            }
+            holder.text.setText(message.getTitle());
+            holder.text2.setText(message.getText());
         }
     }
 
@@ -137,7 +150,7 @@ public class XiangYuAdapter extends RecyclerView.Adapter<XiangYuAdapter.ViewHold
             //第一个item应该加载Header
             return TYPE_HEADER;
         }
-        if (position == getItemCount()-1){
+        if (position == getItemCount()){
             //最后一个,应该加载Footer
             return TYPE_FOOTER;
         }

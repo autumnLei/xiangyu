@@ -9,9 +9,12 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,14 +26,22 @@ import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.model.LatLngBounds;
+import com.baidu.mapapi.search.busline.BusLineSearch;
+import com.baidu.mapapi.search.busline.BusLineSearchOption;
+import com.baidu.mapapi.search.core.PoiInfo;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.poi.*;
 import com.baidu.mapapi.utils.DistanceUtil;
 import com.example.xiangyu.R;
 import com.example.xiangyu.global.MyApplication;
+import com.example.xiangyu.overlayutil.MyOverLay;
 import com.example.xiangyu.service.LocationService;
 import com.example.xiangyu.service.Utils;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -44,12 +55,19 @@ import butterknife.InjectView;
  *
  */
 public class LocationActivity extends Activity {
-    @InjectView(R.id.text)
-    TextView text;
+//    @InjectView(R.id.text)
+//    TextView text;
+    private EditText et_key;
     private MapView mMapView = null;
     private BaiduMap mBaiduMap;
+    private PoiSearch poiSearch;
+    private BusLineSearch busLineSearch;//公交检索对象
     private LocationService locService;
     private LinkedList<LocationEntity> locationList = new LinkedList<LocationEntity>(); // 存放历史定位结果的链表，最大存放当前结果的前5次定位结果
+    StringBuffer currentPosition = new StringBuffer(); //存放当前所在城市
+    BDLocation location; //所在位置
+    double latitude;//所在位置
+    double longitude;//所在位置
 
 
     @Override
@@ -58,6 +76,7 @@ public class LocationActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
         ButterKnife.inject(this);
+        et_key = (EditText) findViewById(R.id.editText);
         mMapView = (MapView) findViewById(R.id.bmapView);
         mBaiduMap = mMapView.getMap();
         mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
@@ -71,49 +90,7 @@ public class LocationActivity extends Activity {
         mOption.setCoorType("bd09ll");
         locService.setLocationOption(mOption);
         locService.registerListener(listener);
-        getPersimmilns();
         locService.start();
-    }
-
-    private void getPersimmilns() {
-        ArrayList<String> permissionList = new ArrayList<>();
-        permissionList.clear();
-        // 定位精确位置
-        if(ContextCompat.checkSelfPermission(LocationActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-        if(ContextCompat.checkSelfPermission(LocationActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            permissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-        }
-        // 读写权限
-        if(ContextCompat.checkSelfPermission(LocationActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-        if (!permissionList.isEmpty()) {
-            String[] permissions = permissionList.toArray(new String[permissionList.size()]);
-            ActivityCompat.requestPermissions(LocationActivity.this, permissions, 1);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0) {
-                    for (int result : grantResults) {
-                        if (result != PackageManager.PERMISSION_GRANTED) {
-                            Toast.makeText(this, "必需同意所有权限才能使用本功能", Toast.LENGTH_SHORT).show();
-                            finish();
-                            return;
-                        }
-                    }
-                } else {
-                    Toast.makeText(this, "发生未知错误", Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                break;
-            default:
-        }
     }
 
     /***
@@ -134,32 +111,40 @@ public class LocationActivity extends Activity {
                     locHander.sendMessage(locMsg);
                 }
             }
-            final BDLocation mLocation = location;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            StringBuffer currentPosition = new StringBuffer();
-                            currentPosition.append("定位城市：");
-                            currentPosition.append(mLocation.getProvince());
-                            currentPosition.append(mLocation.getCity());
-//                            currentPosition.append(mLocation.getDistrict());
-//                            currentPosition.append(mLocation.getStreet());
-//                            if (mLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
-//                                currentPosition.append(" loctype:网络定位");
-//                            } else if (mLocation.getLocType() == BDLocation.TypeGpsLocation) {
-//                                currentPosition.append(" loctype:gps定位");
-//                            } else if (mLocation.getLocType() == BDLocation.TypeOffLineLocation) {
-//                                currentPosition.append(" loctype:离线定位");
-//                            }
-                            text.setText(currentPosition);
-                        }
-                    });
-                }
-            }).start();
-        }
+            if (currentPosition != null) {
+                currentPosition = new StringBuffer();
+            }
+            currentPosition.append(location.getCity());
+//            final BDLocation mLocation = location;
+
+//            new Thread(
+//        }new Runnable() {
+//            @Override
+//            public void run() {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+////                            StringBuffer currentPosition = new StringBuffer();
+////                            currentPosition.append("定位城市：");
+////                            currentPosition.append(mLocation.getProvince());
+//                        if (currentPosition != null) {
+//                            currentPosition = null;
+//                        }
+//                        currentPosition.append(mLocation.getCity());
+////                            currentPosition.append(mLocation.getDistrict());
+////                            currentPosition.append(mLocation.getStreet());
+////                            if (mLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
+////                                currentPosition.append(" loctype:网络定位");
+////                            } else if (mLocation.getLocType() == BDLocation.TypeGpsLocation) {
+////                                currentPosition.append(" loctype:gps定位");
+////                            } else if (mLocation.getLocType() == BDLocation.TypeOffLineLocation) {
+////                                currentPosition.append(" loctype:离线定位");
+////                            }
+////                            text.setText(currentPosition);
+//                    }
+//                });
+            }
+//        }).start();
         public void onConnectHotSpotMessage(String s, int i) {
 
         }
@@ -191,7 +176,7 @@ public class LocationActivity extends Activity {
                         locationList.get(i).location.getLongitude());
                 LatLng curPoint = new LatLng(location.getLatitude(), location.getLongitude());
                 double distance = DistanceUtil.getDistance(lastPoint, curPoint);
-                curSpeed = distance / (System.currentTimeMillis() - locationList.get(i).time) / 1000;
+                curSpeed = distance / (System.currentTimeMillis() - locationList.get(i).time) / 1000; //6秒回到原地一次
                 score += curSpeed * Utils.EARTH_WEIGHT[i];
             }
             if (score > 0.00000999 && score < 0.00005) { // 经验值,开发者可根据业务自行调整，也可以不使用这种算法
@@ -223,7 +208,11 @@ public class LocationActivity extends Activity {
             // TODO Auto-generated method stub
             super.handleMessage(msg);
             try {
-                BDLocation location = msg.getData().getParcelable("loc");
+                if (location != null) {
+                    location = null;
+                }
+                location = msg.getData().getParcelable("loc");
+
 //                int iscal = msg.getData().getInt("iscalculate");
                 if (location != null) {
                     LatLng point = new LatLng(location.getLatitude(), location.getLongitude());
@@ -245,6 +234,12 @@ public class LocationActivity extends Activity {
                     // 在地图上添加Marker，并显示
 //                    mBaiduMap.addOverlay(option);
                     mBaiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(point));
+
+                    //搜索对象的创建
+                    poiSearch = PoiSearch.newInstance();
+                    //设置Poi监听对象
+                    poiSearch.setOnGetPoiSearchResultListener(poiSearchResultListener);
+
                 }
             } catch (Exception e) {
                 // TODO: handle exception
@@ -296,5 +291,152 @@ public class LocationActivity extends Activity {
     class LocationEntity {
         BDLocation location;
         long time;
+    }
+
+
+    //POI检索的监听对象
+    OnGetPoiSearchResultListener poiSearchResultListener = new OnGetPoiSearchResultListener() {
+        //获得POI的检索结果，一般检索数据都是在这里获取
+        @Override
+        public void onGetPoiResult(PoiResult poiResult) {
+            mBaiduMap.clear();
+            if (poiResult != null && poiResult.error == PoiResult.ERRORNO.NO_ERROR) {//如果没有错误
+                MyOverLay overlay = new MyOverLay(mBaiduMap, poiSearch);
+                //设置数据,这里只需要一步，
+                overlay.setData(poiResult);
+
+                // 会严重拖累程序速度
+//                List<PoiInfo> poiList =  poiResult.getAllPoi();
+//                for (int i = 0; i < poiList.size(); i++){
+//                    if(poiList.)
+//                }
+
+                //添加到地图
+                overlay.addToMap();
+                //将显示视图拉倒正好可以看到所有POI兴趣点的缩放等级
+                overlay.zoomToSpan();//计算工具
+//                mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomTo(18));
+                //设置标记物的点击监听事件
+                mBaiduMap.setOnMarkerClickListener(overlay);
+                return;
+            } else {
+                Toast.makeText(getApplication(), "搜索不到你需要的信息！", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        //获得POI的详细检索结果，如果发起的是详细检索，这个方法会得到回调(需要uid)
+        @Override
+        public void onGetPoiDetailResult(PoiDetailResult poiDetailResult) {
+            if (poiDetailResult.error != SearchResult.ERRORNO.NO_ERROR) {
+                Toast.makeText(getApplication(), "抱歉，未找到结果",
+                        Toast.LENGTH_SHORT).show();
+            } else {// 正常返回结果的时候，此处可以获得很多相关信息
+                Toast.makeText(getApplication(), poiDetailResult.getName() + ": "
+                                + poiDetailResult.getAddress(),
+                        Toast.LENGTH_LONG).show();
+                Log.d("666", "onGetPoiDetailResult: "+poiDetailResult.detailUrl);
+                Log.d("666", "onGetPoiDetailResult: "+poiDetailResult.imageNum);
+            }
+        }
+
+        //获得POI室内检索结果
+        @Override
+        public void onGetPoiIndoorResult(PoiIndoorResult poiIndoorResult) {
+
+        }
+    };
+//
+//    //公交路线的点的POI检索的监听对象
+//    OnGetPoiSearchResultListener busPoiSearchResultListener = new OnGetPoiSearchResultListener() {
+//        //获得POI的检索结果，一般检索数据都是在这里获取
+//        @Override
+//        public void onGetPoiResult(PoiResult poiResult) {
+//            mBaiduMap.clear();//清除标志
+//            if (poiResult != null && poiResult.error == PoiResult.ERRORNO.NO_ERROR) {//如果没有错误
+//                //遍历所有数据
+//                for (int i = 0; i < poiResult.getAllPoi().size(); i++) {
+//                    //获取里面的数据对象
+//                    PoiInfo poiInfo = poiResult.getAllPoi().get(i);
+//                    //判断检索到的点的类型是不是公交路线或地铁路线
+//                    if (poiInfo.type == PoiInfo.POITYPE.BUS_LINE || poiInfo.type == PoiInfo.POITYPE.SUBWAY_LINE) {
+//                        //发起公交检索
+//                        BusLineSearchOption busLineOptions = new BusLineSearchOption();
+//                        busLineOptions.city("深圳").uid(poiInfo.uid);
+//                        busLineSearch.searchBusLine(busLineOptions);
+//                    }
+//                }
+//                return;
+//            } else {
+//                Toast.makeText(getApplication(), "搜索不到你需要的信息！", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+
+//        //获得POI的详细检索结果，如果发起的是详细检索，这个方法会得到回调(需要uid)
+//        @Override
+//        public void onGetPoiDetailResult(PoiDetailResult poiDetailResult) {
+//            if (poiDetailResult.error != SearchResult.ERRORNO.NO_ERROR) {
+//                Toast.makeText(getApplication(), "抱歉，未找到结果",
+//                        Toast.LENGTH_SHORT).show();
+//            } else {// 正常返回结果的时候，此处可以获得很多相关信息
+//                Toast.makeText(getApplication(), poiDetailResult.getName() + ": "
+//                                + poiDetailResult.getAddress(),
+//                        Toast.LENGTH_LONG).show();
+//            }
+//        }
+//
+//        //获得POI室内检索结果
+//        @Override
+//        public void onGetPoiIndoorResult(PoiIndoorResult poiIndoorResult) {
+//
+//        }
+//    };
+
+    //POI搜索，范围检索,
+    public void selectAround(View view) {
+
+        //定义Maker坐标点,当前坐标
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        //获得Key
+        String key = et_key.getText().toString();
+        //发起周边检索
+        PoiBoundSearchOption boundSearchOption = new PoiBoundSearchOption();
+        LatLng southwest = new LatLng(latitude - 0.01, longitude - 0.012);// 西南
+        LatLng northeast = new LatLng(latitude + 0.01, longitude + 0.012);// 东北
+        LatLngBounds bounds = new LatLngBounds.Builder().include(southwest)
+                .include(northeast).build();// 得到一个地理范围对象
+        boundSearchOption.bound(bounds);// 设置poi检索范围
+        boundSearchOption.keyword(key);// 检索关键字
+        boundSearchOption.pageNum(1);//搜索一页
+        poiSearch.searchInBound(boundSearchOption);// 发起poi范围检索请求
+    }
+
+    //POI搜索，周边检索,
+    public void selectPoint(View view) {
+        //定义Maker坐标点,深圳大学经度和纬度113.943062,22.54069
+        //设置的时候经纬度是反的 纬度在前，经度在后
+        LatLng point = new LatLng(latitude, longitude);
+        //获得Key
+        String key = et_key.getText().toString();
+        //周边检索
+        PoiNearbySearchOption nearbySearchOption = new PoiNearbySearchOption();
+        nearbySearchOption.location(point);
+        nearbySearchOption.keyword(key);
+        nearbySearchOption.radius(10000);// 检索半径，单位是米
+        nearbySearchOption.pageNum(1);//搜索一页
+        poiSearch.searchNearby(nearbySearchOption);// 发起附近检索请求
+    }
+
+    //POI搜索，城市检索
+    public void select(View view) {
+        //获得Key
+        String city = currentPosition.toString();
+        String key = et_key.getText().toString();
+        //发起检索
+        PoiCitySearchOption poiCity = new PoiCitySearchOption();
+        poiCity.keyword(key).city(city);
+        poiSearch.searchInCity(poiCity);
+        InputMethodManager imm = (InputMethodManager) getSystemService(LocationActivity.this.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
     }
 }

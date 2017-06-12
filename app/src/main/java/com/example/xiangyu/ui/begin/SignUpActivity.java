@@ -42,11 +42,12 @@ public class SignUpActivity extends AppCompatActivity {
                 .load(R.drawable.splash)
                 .centerCrop()
                 .into(imageview);
+        btnLogin.setAlpha(0.7f);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (true) {
-                    Toast.makeText(SignUpActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(SignUpActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(SignUpActivity.this, XiangYuActivity.class);
                     intent.putExtra("login", "ok");
                     startActivity(intent);

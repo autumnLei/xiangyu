@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/recover2"
-        android:icon="@drawable/recover"
-        android:title="recover"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/search"
         android:icon="@drawable/search"
         android:title="Search"

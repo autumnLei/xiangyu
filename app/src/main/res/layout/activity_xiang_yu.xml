@@ -20,8 +20,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/background"
-                android:title="LSports"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:theme="@style/ToolbarTheme"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:layout_scrollFlags="scroll|enterAlways|snap">
 

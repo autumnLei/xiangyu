@@ -59,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                 .load(R.drawable.splash)
                 .centerCrop()
                 .into(imageview);
+        btnLogin.setAlpha(0.7f);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

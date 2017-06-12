@@ -19,7 +19,7 @@
         android:name=".global.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="LSports"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <meta-data
@@ -52,14 +52,8 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
         <activity
-            android:name=".ui.nav.NavNewsActivity"
-            android:label="@string/title_activity_mnews"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".ui.nav.NavHistoryActivity"
-            android:label="@string/title_activity_mhistory"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".ui.nav.NavCollectionActivity" />
+            android:name=".ui.nav.NavAboutActivity"
+            android:label="关于LSports" />
         <activity
             android:name=".ui.begin.SplashActivity"
             android:theme="@style/NoTitleFullscreen">
@@ -71,8 +65,20 @@
         </activity>
         <activity android:name=".ui.begin.LoginActivity" />
         <activity android:name=".ui.begin.SignUpActivity" />
-        <activity android:name=".ui.ButtonActivity" />
-        <activity android:name=".ui.ButtonSportsActivity"></activity>
+        <activity android:name=".ui.buttons.ButtonActivity" />
+        <activity android:name=".ui.buttons.ButtonSportsActivity" />
+        <activity
+            android:name=".ui.buttons.PictureActivity"
+            android:label="图片" />
+        <activity
+            android:name=".ui.buttons.RaceActivity"
+            android:label="赛事" />
+        <activity
+            android:name=".ui.buttons.FrendActivity"
+            android:label="新的朋友" />
+        <activity android:name=".ui.buttons.PictureShowActivity"
+            android:label="图片"
+            />
     </application>
 
 </manifest>

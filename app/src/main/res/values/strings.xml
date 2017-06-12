@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">L运动</string>
+    <string name="app_name">LSports</string>
     <string name="title_activity_gong_lue">GongLueActivity</string>
 
     <string name="action_settings">Settings</string>
@@ -106,4 +106,5 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_mhistory">MhistoryActivity</string>
     <string name="title_activity_">Activity</string>
+    <string name="title_activity_frend">FrendActivity</string>
 </resources>
